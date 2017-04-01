@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.yupenglei.yu_rxandroid.MainActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_default"/>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <FrameLayout
+            android:id="@+id/container_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <fragment
+            android:id="@+id/fragment_drawer"
+            class="com.example.yupenglei.yu_rxandroid.NavigationDrawerFragment"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            tools:layout="@layout/fragment_navigation_drawer"/>
+
+    </android.support.v4.widget.DrawerLayout>
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical">-->
+
+
+    <!--&lt;!&ndash;<android.support.v4.widget.DrawerLayout&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_below="@id/toolbar">&ndash;&gt;-->
+
+    <!--<FrameLayout-->
+    <!--android:id="@+id/container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
+
+    <!--</LinearLayout>-->
+
+    <!--<fragment-->
+    <!--android:id="@+id/fragment_drawer"-->
+    <!--class="com.example.yupenglei.yu_rxandroid.NavigationDrawerFragment"-->
+    <!--android:layout_width="240dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_gravity="start"-->
+    <!--tools:layout="@layout/fragment_navigation_drawer"/>-->
+
+    <!--&lt;!&ndash;</android.support.v4.widget.DrawerLayout>&ndash;&gt;-->
+
+
+</RelativeLayout>
