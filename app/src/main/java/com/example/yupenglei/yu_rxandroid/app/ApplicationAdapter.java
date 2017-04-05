@@ -1,5 +1,7 @@
 package com.example.yupenglei.yu_rxandroid.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,12 @@ import android.widget.TextView;
 import com.example.yupenglei.yu_rxandroid.R;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by yupenglei on 17/3/31.
@@ -22,6 +30,20 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         mAppInfoList = appInfoList;
     }
 
+    public void addAppInfos(List<AppInfo> appInfoList) {
+        mAppInfoList.clear();
+        mAppInfoList.addAll(appInfoList);
+        notifyDataSetChanged();
+    }
+
+    public void addAppInfo(AppInfo appInfo, int position) {
+        if (position < 0) {
+            position = 0;
+        }
+        mAppInfoList.set(position, appInfo);
+        notifyItemChanged(position);
+    }
+
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycler,
@@ -30,8 +52,30 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(final VH holder, int position) {
+        holder.mName.setText(mAppInfoList.get(position).getName());
+        getBitmap(mAppInfoList.get(position).getIcon())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        holder.mIcon.setImageBitmap(bitmap);
+                    }
+                });
 
+    }
+
+    private Observable<Bitmap> getBitmap(final String filepath) {
+
+        return Observable.create(new Observable.OnSubscribe<Bitmap>() {
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                Bitmap bitmap = BitmapFactory.decodeFile(filepath);
+                subscriber.onNext(bitmap);
+                subscriber.onCompleted();
+            }
+        });
     }
 
     @Override
@@ -40,10 +84,10 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     class VH extends RecyclerView.ViewHolder {
-        public ImageView mIcon;
-        public TextView mName;
+        ImageView mIcon;
+        TextView mName;
 
-        public VH(View itemView) {
+        VH(View itemView) {
             super(itemView);
             mIcon = (ImageView) itemView.findViewById(R.id.icon);
             mName = (TextView) itemView.findViewById(R.id.name);

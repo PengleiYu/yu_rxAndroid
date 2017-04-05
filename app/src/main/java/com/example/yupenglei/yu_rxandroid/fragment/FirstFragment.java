@@ -1,24 +1,25 @@
-package com.example.yupenglei.yu_rxandroid;
+package com.example.yupenglei.yu_rxandroid.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.yupenglei.yu_rxandroid.R;
+import com.example.yupenglei.yu_rxandroid.Utils;
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.AppInfoRich;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationAdapter;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,64 +27,56 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscriber;
-import rx.functions.Action0;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by yupenglei on 17/3/31.
  */
 
-public class FirstFragment extends ExampleFragment {
-    @BindView(R.id.recycler_fragment_example)
-    RecyclerView mRecyclerView;
-
-    private File mFileDir;
-    private Unbinder mUnbinder;
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mUnbinder = ButterKnife.bind(getActivity(), view);
-
-
-        ApplicationAdapter adapter=new ApplicationAdapter(new ArrayList<AppInfo>());
-        mRecyclerView.setAdapter(adapter);
-
-//        getFileDir()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Action1<File>() {
-//                    @Override
-//                    public void call(File file) {
-//                        mFileDir = file;
-//                        refreshList();
-//                    }
-//                });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
-    }
+public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayout
+        .OnRefreshListener {
 
     private void refreshList() {
+        getApps()
+                .subscribeOn(Schedulers.io())
+                .toSortedList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<AppInfo>>() {
+                    @Override
+                    public void onCompleted() {
+                        Toast.makeText(getActivity(), "Here is a list", Toast.LENGTH_SHORT).show();
+                    }
 
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(List<AppInfo> appInfos) {
+                        mAdapter.addAppInfos(appInfos);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        storeList(appInfos);
+                    }
+                });
     }
 
     private void storeList(final List<AppInfo> appInfos) {
         ApplicationList.getInstance().setList(appInfos);
 
-        Schedulers.io().createWorker().schedule(new Action0() {
-            @Override
-            public void call() {
-                SharedPreferences sp = getActivity().getPreferences(Context.MODE_PRIVATE);
-                Type type = new TypeToken<List<AppInfo>>() {
-                }.getType();
-                sp.edit().putString("Apps", new Gson().toJson(appInfos, type)).apply();
-            }
-        });
+//        Schedulers.io().createWorker().schedule(new Action0() {
+//            @Override
+//            public void call() {
+//                SharedPreferences sp = getActivity().getPreferences(Context.MODE_PRIVATE);
+//                Type type = new TypeToken<List<AppInfo>>() {
+//                }.getType();
+//                sp.edit().putString("Apps", new Gson().toJson(appInfos, type)).apply();
+//            }
+//        });
     }
 
     private Observable<File> getFileDir() {
@@ -113,12 +106,13 @@ public class FirstFragment extends ExampleFragment {
                 for (AppInfoRich appInfoRich : appInfos) {
                     Bitmap icon = Utils.drawable2Bitmap(appInfoRich.getIcon());
                     String name = appInfoRich.getName();
-                    String iconPath = mFileDir + File.pathSeparator + name;
+                    String iconPath = getActivity().getFilesDir() + "/" + name;
                     Utils.storeBitmap(getActivity(), icon, name);
 
                     if (subscriber.isUnsubscribed()) {
                         return;
                     }
+                    Log.e(">>>", String.format("iconPath=%s", iconPath));
                     subscriber.onNext(new AppInfo(name, iconPath, appInfoRich.getLastUpdateTime()));
                 }
                 if (!subscriber.isUnsubscribed()) {
@@ -129,4 +123,8 @@ public class FirstFragment extends ExampleFragment {
 
     }
 
+    @Override
+    public void onRefresh() {
+        refreshList();
+    }
 }
