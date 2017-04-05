@@ -30,7 +30,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         mAppInfoList = appInfoList;
     }
 
-    public void addAppInfos(List<AppInfo> appInfoList) {
+    public void addAppInfo(List<AppInfo> appInfoList) {
         mAppInfoList.clear();
         mAppInfoList.addAll(appInfoList);
         notifyDataSetChanged();
@@ -40,8 +40,13 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         if (position < 0) {
             position = 0;
         }
-        mAppInfoList.set(position, appInfo);
+        mAppInfoList.add(position, appInfo);
         notifyItemChanged(position);
+    }
+
+    public void addAppInfo(AppInfo appInfo) {
+        mAppInfoList.add(appInfo);
+        notifyItemChanged(mAppInfoList.size() - 1);
     }
 
     @Override
@@ -80,7 +85,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     @Override
     public int getItemCount() {
-        return mAppInfoList.size();
+        return mAppInfoList == null ? 0 : mAppInfoList.size();
     }
 
     class VH extends RecyclerView.ViewHolder {

@@ -1,5 +1,6 @@
 package com.example.yupenglei.yu_rxandroid;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,8 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 
-import com.example.yupenglei.yu_rxandroid.fragment.FirstFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.FirstFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.NavigationDrawerFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.SecondFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.ThreeFragment;
 
 import butterknife.ButterKnife;
 
@@ -36,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         NavigationDrawerFragment fragment_drawer = (NavigationDrawerFragment) getFragmentManager
                 ().findFragmentById(R.id.fragment_drawer);
         fragment_drawer.setNavigationDrawerCallbacks(this);
-
         fragment_drawer.setUp(drawerLayout, toolbar);
+        onNavigationDrawerItemSelected(0);
     }
 
 
@@ -50,15 +53,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         Log.e(">>>", String.format("click item %d", position));
-        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = null;
         switch (position) {
             case 0:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new FirstFragment())
-                        .commit();
+                fragment = new FirstFragment();
                 break;
             case 1:
+                fragment = new SecondFragment();
                 break;
+            case 2:
+                fragment = new ThreeFragment();
+                break;
+        }
+        if (fragment != null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.frameLayout_container, fragment)
+                    .commit();
         }
     }
 }

@@ -1,31 +1,21 @@
-package com.example.yupenglei.yu_rxandroid.fragment;
+package com.example.yupenglei.yu_rxandroid.fragment.ui;
 
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.yupenglei.yu_rxandroid.R;
 import com.example.yupenglei.yu_rxandroid.Utils;
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.AppInfoRich;
-import com.example.yupenglei.yu_rxandroid.app.ApplicationAdapter;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
+import com.example.yupenglei.yu_rxandroid.fragment.MidLayerFragment;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -40,8 +30,7 @@ public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayou
         .OnRefreshListener {
 
     private void refreshList() {
-        getApps()
-                .subscribeOn(Schedulers.io())
+        getApps().subscribeOn(Schedulers.io())
                 .toSortedList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<AppInfo>>() {
@@ -58,7 +47,7 @@ public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayou
 
                     @Override
                     public void onNext(List<AppInfo> appInfos) {
-                        mAdapter.addAppInfos(appInfos);
+                        mAdapter.addAppInfo(appInfos);
                         mSwipeRefreshLayout.setRefreshing(false);
                         storeList(appInfos);
                     }
@@ -112,7 +101,6 @@ public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayou
                     if (subscriber.isUnsubscribed()) {
                         return;
                     }
-                    Log.e(">>>", String.format("iconPath=%s", iconPath));
                     subscriber.onNext(new AppInfo(name, iconPath, appInfoRich.getLastUpdateTime()));
                 }
                 if (!subscriber.isUnsubscribed()) {

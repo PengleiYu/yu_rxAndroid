@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.yupenglei.yu_rxandroid.R;
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
@@ -24,10 +25,10 @@ import butterknife.Unbinder;
 public abstract class MidLayerFragment extends BaseFragment implements SwipeRefreshLayout
         .OnRefreshListener {
     @BindView(R.id.recycler_fragment_example)
-    RecyclerView mRecyclerView;
+    protected RecyclerView mRecyclerView;
 
     @BindView(R.id.swipe_container_fragment_example)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    protected SwipeRefreshLayout mSwipeRefreshLayout;
     private Unbinder mUnbinder;
     protected ApplicationAdapter mAdapter;
 
@@ -49,5 +50,16 @@ public abstract class MidLayerFragment extends BaseFragment implements SwipeRefr
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    protected void doCompelet(String fragmentNumber) {
+        Toast.makeText(getActivity(), "Here is the " + fragmentNumber + " list", Toast
+                .LENGTH_SHORT).show();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    protected void doError() {
+        Toast.makeText(getActivity(), "Something is wrong", Toast.LENGTH_SHORT).show();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

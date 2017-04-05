@@ -11,7 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -42,12 +41,12 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
             savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        Log.e(">>>", String.format("view parent is drawer: %s", view.getParent()));
         ListView listView = (ListView) view.findViewById(R.id.list_view_fragment_drawer);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
                 .simple_list_item_1, new ArrayList<String>());
-        adapter.add("item 1");
-        adapter.add("item 2");
+        for (int i = 1; i < 10; i++) {
+            adapter.add("item " + i);
+        }
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
@@ -57,7 +56,6 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//        mDrawerLayout.closeDrawer(Gravity.START);
         if (getView() != null) {
             if (getView().getParent() instanceof DrawerLayout) {
                 ((DrawerLayout) getView().getParent()).closeDrawer(Gravity.START);
