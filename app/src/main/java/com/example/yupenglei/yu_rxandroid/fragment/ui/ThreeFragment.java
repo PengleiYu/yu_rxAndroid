@@ -23,7 +23,7 @@ public class ThreeFragment extends MidLayerFragment {
     private Subscription mSubscription;
 
     @Override
-    public void onRefresh() {
+    protected void loadApps() {
         List<AppInfo> list = ApplicationList.getInstance().getList();
         loadApps(list.get(0), list.get(1), list.get(2));
     }

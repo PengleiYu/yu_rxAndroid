@@ -17,9 +17,8 @@ import rx.Subscriber;
 
 public class SecondFragment extends MidLayerFragment {
     @Override
-    public void onRefresh() {
+    protected void loadApps() {
         loadList(ApplicationList.getInstance().getList());
-
     }
 
     private void loadList(List<AppInfo> appInfos) {

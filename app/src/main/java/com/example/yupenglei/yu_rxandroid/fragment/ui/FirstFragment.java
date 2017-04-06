@@ -3,8 +3,6 @@ package com.example.yupenglei.yu_rxandroid.fragment.ui;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.widget.Toast;
 
 import com.example.yupenglei.yu_rxandroid.Utils;
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
@@ -26,33 +24,7 @@ import rx.schedulers.Schedulers;
  * Created by yupenglei on 17/3/31.
  */
 
-public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayout
-        .OnRefreshListener {
-
-    private void refreshList() {
-        getApps().subscribeOn(Schedulers.io())
-                .toSortedList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<AppInfo>>() {
-                    @Override
-                    public void onCompleted() {
-                        Toast.makeText(getActivity(), "Here is a list", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT)
-                                .show();
-                    }
-
-                    @Override
-                    public void onNext(List<AppInfo> appInfos) {
-                        mAdapter.addAppInfo(appInfos);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        storeList(appInfos);
-                    }
-                });
-    }
+public class FirstFragment extends MidLayerFragment   {
 
     private void storeList(final List<AppInfo> appInfos) {
         ApplicationList.getInstance().setList(appInfos);
@@ -112,7 +84,26 @@ public class FirstFragment extends MidLayerFragment implements SwipeRefreshLayou
     }
 
     @Override
-    public void onRefresh() {
-        refreshList();
+    protected void loadApps() {
+        getApps().subscribeOn(Schedulers.io())
+                .toSortedList()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<AppInfo>>() {
+                    @Override
+                    public void onCompleted() {
+                        doCompelet("First");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        doError();
+                    }
+
+                    @Override
+                    public void onNext(List<AppInfo> appInfos) {
+                        mAdapter.addAppInfo(appInfos);
+                        storeList(appInfos);
+                    }
+                });
     }
 }

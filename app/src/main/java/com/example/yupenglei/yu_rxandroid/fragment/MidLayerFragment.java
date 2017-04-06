@@ -62,4 +62,11 @@ public abstract class MidLayerFragment extends BaseFragment implements SwipeRefr
         Toast.makeText(getActivity(), "Something is wrong", Toast.LENGTH_SHORT).show();
         mSwipeRefreshLayout.setRefreshing(false);
     }
+
+    @Override
+    public void onRefresh() {
+        mAdapter.clear();
+        loadApps();
+    }
+    protected abstract void loadApps();
 }

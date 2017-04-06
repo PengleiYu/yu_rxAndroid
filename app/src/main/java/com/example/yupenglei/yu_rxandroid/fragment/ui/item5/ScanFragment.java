@@ -1,44 +1,33 @@
-package com.example.yupenglei.yu_rxandroid.fragment.ui.item4;
+package com.example.yupenglei.yu_rxandroid.fragment.ui.item5;
 
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
 import com.example.yupenglei.yu_rxandroid.fragment.MidLayerFragment;
 
-import java.util.List;
-
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action0;
-import rx.functions.Func1;
+import rx.functions.Func2;
 
 /**
- * Created by yupenglei on 17/4/5.
+ * Created by yupenglei on 17/4/6.
  */
 
-public class FilterFragment extends MidLayerFragment {
+public class ScanFragment extends MidLayerFragment {
     @Override
     protected void loadApps() {
-        loadList(ApplicationList.getInstance().getList());
-    }
-
-    private void loadList(List<AppInfo> appInfos) {
-        Observable.from(appInfos)
-                .filter(new Func1<AppInfo, Boolean>() {
+        mAdapter.clear();
+        Observable.from(ApplicationList.getInstance().getList())
+                .scan(new Func2<AppInfo, AppInfo, AppInfo>() {
                     @Override
-                    public Boolean call(AppInfo info) {
-                        return info.getName().toUpperCase().startsWith("C");
+                    public AppInfo call(AppInfo info, AppInfo info2) {
+                        return info.getName().length() > info2.getName().length() ? info : info2;
                     }
                 })
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mAdapter.clear();
-                    }
-                })
+                .distinct()
                 .subscribe(new Subscriber<AppInfo>() {
                     @Override
                     public void onCompleted() {
-                        doCompelet("Filter");
+                        doCompelet("scan");
                     }
 
                     @Override

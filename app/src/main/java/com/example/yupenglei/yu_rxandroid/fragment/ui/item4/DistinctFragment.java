@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * Created by yupenglei on 17/4/5.
@@ -24,8 +22,7 @@ public class DistinctFragment extends MidLayerFragment {
     private Subscription mSubscribe;
 
     @Override
-    public void onRefresh() {
-        mAdapter.clear();
+    protected void loadApps() {
         loadApps(ApplicationList.getInstance().getList());
     }
 
@@ -64,7 +61,7 @@ public class DistinctFragment extends MidLayerFragment {
 //                .sample(3, TimeUnit.SECONDS)
 //                .throttleFirst(3,TimeUnit.SECONDS)
 //                .timeout(2, TimeUnit.SECONDS)
-                .debounce(1,TimeUnit.SECONDS)
+                .debounce(1, TimeUnit.SECONDS)
                 .subscribe(new Subscriber<Long>() {
                     @Override
                     public void onCompleted() {

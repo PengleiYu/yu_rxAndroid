@@ -1,44 +1,33 @@
-package com.example.yupenglei.yu_rxandroid.fragment.ui.item4;
+package com.example.yupenglei.yu_rxandroid.fragment.ui.item5;
 
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
 import com.example.yupenglei.yu_rxandroid.fragment.MidLayerFragment;
 
-import java.util.List;
-
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action0;
 import rx.functions.Func1;
 
 /**
- * Created by yupenglei on 17/4/5.
+ * Created by yupenglei on 17/4/6.
  */
 
-public class FilterFragment extends MidLayerFragment {
+public class MapFragment extends MidLayerFragment {
+
     @Override
     protected void loadApps() {
-        loadList(ApplicationList.getInstance().getList());
-    }
-
-    private void loadList(List<AppInfo> appInfos) {
-        Observable.from(appInfos)
-                .filter(new Func1<AppInfo, Boolean>() {
+        Observable.from(ApplicationList.getInstance().getList())
+                .map(new Func1<AppInfo, AppInfo>() {
                     @Override
-                    public Boolean call(AppInfo info) {
-                        return info.getName().toUpperCase().startsWith("C");
-                    }
-                })
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mAdapter.clear();
+                    public AppInfo call(AppInfo info) {
+                        info.setName(info.getName().toLowerCase());
+                        return info;
                     }
                 })
                 .subscribe(new Subscriber<AppInfo>() {
                     @Override
                     public void onCompleted() {
-                        doCompelet("Filter");
+                        doCompelet("map");
                     }
 
                     @Override

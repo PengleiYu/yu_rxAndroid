@@ -16,7 +16,7 @@ import rx.functions.Action0;
 
 public class TakeFragment extends MidLayerFragment {
     @Override
-    public void onRefresh() {
+    protected void loadApps() {
         loadList(ApplicationList.getInstance().getList());
     }
 

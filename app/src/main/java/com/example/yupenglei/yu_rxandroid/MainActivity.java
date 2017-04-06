@@ -16,6 +16,9 @@ import com.example.yupenglei.yu_rxandroid.fragment.NavigationDrawerFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.SecondFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.ThreeFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.TakeFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.GroupByFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.MapFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.ScanFragment;
 
 import butterknife.ButterKnife;
 
@@ -73,6 +76,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 5:
                 fragment = new DistinctFragment();
+                break;
+            case 6:
+                fragment = new MapFragment();
+                break;
+            case 7:
+                fragment = new ScanFragment();
+                break;
+            case 8:
+                fragment = new GroupByFragment();
                 break;
         }
         if (fragment != null) {
