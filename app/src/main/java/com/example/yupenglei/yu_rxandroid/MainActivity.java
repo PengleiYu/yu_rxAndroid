@@ -1,7 +1,6 @@
 package com.example.yupenglei.yu_rxandroid;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +9,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.DistinctFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.FilterFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.FirstFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.NavigationDrawerFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.SecondFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.ThreeFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.TakeFragment;
 
 import butterknife.ButterKnife;
 
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         NavigationDrawerFragment fragment_drawer = (NavigationDrawerFragment) getFragmentManager
                 ().findFragmentById(R.id.fragment_drawer);
         fragment_drawer.setNavigationDrawerCallbacks(this);
-        fragment_drawer.setUp(drawerLayout, toolbar);
         onNavigationDrawerItemSelected(0);
     }
 
@@ -63,6 +64,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 2:
                 fragment = new ThreeFragment();
+                break;
+            case 3:
+                fragment = new FilterFragment();
+                break;
+            case 4:
+                fragment = new TakeFragment();
+                break;
+            case 5:
+                fragment = new DistinctFragment();
                 break;
         }
         if (fragment != null) {

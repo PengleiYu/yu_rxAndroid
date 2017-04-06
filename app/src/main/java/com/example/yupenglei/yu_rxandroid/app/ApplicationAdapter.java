@@ -44,6 +44,10 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         notifyItemChanged(position);
     }
 
+    public void clear(){
+        mAppInfoList.clear();
+        notifyDataSetChanged();
+    }
     public void addAppInfo(AppInfo appInfo) {
         mAppInfoList.add(appInfo);
         notifyItemChanged(mAppInfoList.size() - 1);

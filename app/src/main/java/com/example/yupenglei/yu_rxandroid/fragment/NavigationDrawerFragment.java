@@ -5,8 +5,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,14 +24,9 @@ import java.util.ArrayList;
 
 public class NavigationDrawerFragment extends Fragment implements AdapterView.OnItemClickListener {
     private NavigationDrawerCallbacks mNavigationDrawerCallbacks;
-    private DrawerLayout mDrawerLayout;
 
     public void setNavigationDrawerCallbacks(NavigationDrawerCallbacks callbacks) {
         mNavigationDrawerCallbacks = callbacks;
-    }
-
-    public void setUp(DrawerLayout drawerLayout, Toolbar toolbar) {
-        mDrawerLayout = drawerLayout;
     }
 
     @Nullable
@@ -44,9 +37,12 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
         ListView listView = (ListView) view.findViewById(R.id.list_view_fragment_drawer);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout
                 .simple_list_item_1, new ArrayList<String>());
-        for (int i = 1; i < 10; i++) {
-            adapter.add("item " + i);
-        }
+        adapter.add("Main");
+        adapter.add("from");
+        adapter.add("just");
+        adapter.add("filter");
+        adapter.add("take");
+        adapter.add("distinct");
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
