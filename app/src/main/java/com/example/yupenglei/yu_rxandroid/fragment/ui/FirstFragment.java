@@ -3,6 +3,7 @@ package com.example.yupenglei.yu_rxandroid.fragment.ui;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.yupenglei.yu_rxandroid.Utils;
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
@@ -18,13 +19,14 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by yupenglei on 17/3/31.
  */
 
-public class FirstFragment extends MidLayerFragment   {
+public class FirstFragment extends MidLayerFragment {
 
     private void storeList(final List<AppInfo> appInfos) {
         ApplicationList.getInstance().setList(appInfos);
@@ -83,7 +85,44 @@ public class FirstFragment extends MidLayerFragment   {
 
     }
 
+//    @Override
+//    public void onRefresh() {
+//        mAdapter.clear();
+//        loadApps();
+//    }
+
     @Override
+    protected Observable<AppInfo> getObservable() {
+        Observable<List<AppInfo>> listObservable = getApps().subscribeOn(Schedulers.io())
+                .toSortedList();
+        listObservable.subscribe(new Subscriber<List<AppInfo>>() {
+            @Override
+            public void onCompleted() {
+                Log.e(">>>", "storeList completed");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+                Log.e(">>>", "storeList error");
+            }
+
+            @Override
+            public void onNext(List<AppInfo> appInfos) {
+                storeList(appInfos);
+            }
+        });
+
+        Observable<Observable<AppInfo>> map = listObservable
+                .map(new Func1<List<AppInfo>, Observable<AppInfo>>() {
+                    @Override
+                    public Observable<AppInfo> call(List<AppInfo> appInfos) {
+                        return Observable.from(appInfos);
+                    }
+                });
+        return Observable.concat(map).observeOn(AndroidSchedulers.mainThread());
+    }
+
     protected void loadApps() {
         getApps().subscribeOn(Schedulers.io())
                 .toSortedList()

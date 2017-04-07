@@ -3,8 +3,8 @@ package com.example.yupenglei.yu_rxandroid;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import lombok.Getter;
@@ -14,9 +14,8 @@ import rx.functions.Action1;
 import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.observables.GroupedObservable;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import rx.subjects.Subject;
 
 import static org.junit.Assert.assertEquals;
 
@@ -278,6 +277,220 @@ public class ExampleUnitTest {
                     @Override
                     public void call(Object o) {
                         System.out.println(o);
+                    }
+                });
+    }
+
+    @Test
+    public void testMerge() {
+        Observable<Integer> observable1 = Observable.range(0, 10).subscribeOn(Schedulers
+                .newThread());
+        Observable<Integer> observable2 = Observable.range(0, 10).subscribeOn(Schedulers
+                .newThread());
+        Observable.merge(observable1, observable2)
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer integer) {
+                        System.out.println(integer);
+                    }
+                });
+    }
+
+    @Test
+    public void testMy() {
+        Observable<GroupedObservable<Character, String>> groupedObservableObservable =
+                Observable
+                        .from(getStringList())
+                        .toSortedList(new Func2<String, String, Integer>() {
+                            @Override
+                            public Integer call(String s, String s2) {
+                                return s.length() - s2.length();
+                            }
+                        })
+                        .flatMap(new Func1<List<String>, Observable<String>>() {
+                            @Override
+                            public Observable<String> call(List<String> strings) {
+                                return Observable.from(strings);
+                            }
+                        })
+                        .groupBy(new Func1<String, Character>() {
+                            @Override
+                            public Character call(String s) {
+                                return s.charAt(0);
+                            }
+                        });
+
+        Observable.concat(groupedObservableObservable)
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
+
+    }
+
+    private List<String> getStringList() {
+        List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("aa");
+        list.add("bb");
+        list.add("cc");
+        list.add("aaa");
+        list.add("bbb");
+        list.add("ccc");
+        list.add("aaaa");
+        list.add("bbbb");
+        list.add("cccc");
+        list.add("aaaaa");
+        list.add("bbbbb");
+        list.add("ccccc");
+        Collections.shuffle(list);
+        return list;
+    }
+
+    @Test
+    public void testJoin() {
+        getTargetObservable("left")
+                .subscribeOn(Schedulers.io())
+//        Observable.just("right1", "right2", "right3")
+                .join(getTargetObservable("right").subscribeOn(Schedulers.computation()),
+                        new Func1<String, Observable<Long>>() {
+                            @Override
+                            public Observable<Long> call(String s) {
+                                return Observable.timer(5, TimeUnit.SECONDS);
+                            }
+                        },
+                        new Func1<String, Observable<Long>>() {
+                            @Override
+                            public Observable<Long> call(String s) {
+                                return Observable.timer(1, TimeUnit.SECONDS);
+                            }
+                        },
+                        new Func2<String, String, String>() {
+                            @Override
+                            public String call(String s, String s2) {
+                                return s + " " + s2;
+                            }
+                        })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
+    }
+
+    private Observable<String> getTargetObservable(final String lefOrRight) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                for (int i = 0; i < 9; i++) {
+                    subscriber.onNext(lefOrRight + "-" + i);
+                    try {
+                        System.out.println(lefOrRight + " sleep");
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                subscriber.onCompleted();
+            }
+        });
+//        return Observable.zip(
+//                Observable.range(0, 10),
+//                Observable.interval(1, TimeUnit.SECONDS),
+//                new Func2<Integer, Long, String>() {
+//                    @Override
+//                    public String call(Integer integer, Long aLong) {
+//                        return integer.toString();
+//                    }
+//                });
+    }
+
+    @Test
+    public void testJoin2() {
+        Observable<String> observableLeft = Observable.interval(1000, TimeUnit.MILLISECONDS)
+                .map(new Func1<Long, String>() {
+                    @Override
+                    public String call(Long aLong) {
+                        return aLong.toString();
+                    }
+                });
+        Observable<Long> observableRight = Observable.interval(1000, TimeUnit.MILLISECONDS);
+        observableLeft.join(observableRight,
+                new Func1<String, Observable<Long>>() {
+                    @Override
+                    public Observable<Long> call(String s) {
+                        return Observable.timer(2, TimeUnit.SECONDS);
+                    }
+                }, new Func1<Long, Observable<Long>>() {
+                    @Override
+                    public Observable<Long> call(Long aLong) {
+                        return Observable.interval(0, TimeUnit.SECONDS);
+                    }
+                }, new Func2<String, Long, String>() {
+                    @Override
+                    public String call(String s, Long aLong) {
+                        return s + " " + aLong;
+                    }
+                })
+                .observeOn(Schedulers.newThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
+    }
+
+    @Test
+    public void testJoin3() {
+    }
+
+    @Test
+    public void testCombineLatest() {
+        Observable<Long> interval1 = Observable.interval(1, TimeUnit.SECONDS);
+        Observable<Long> interval2 = Observable.interval(1500, TimeUnit.MILLISECONDS);
+        Observable.combineLatest(interval1, interval2,
+                new Func2<Long, Long, String>() {
+                    @Override
+                    public String call(Long aLong, Long aLong2) {
+                        System.out.println("hah");
+                        return String.format("%s-%s", aLong, aLong2);
+                    }
+                })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
+    }
+    @Test
+    public void testStartWith(){
+        Observable<String> observable = Observable.interval(1, TimeUnit.SECONDS)
+                .map(new Func1<Long, String>() {
+                    @Override
+                    public String call(Long aLong) {
+                        return "time " + aLong;
+                    }
+                });
+        observable
+//                .startWith("hello","world","!")
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        System.out.println(s);
+                    }
+                });
+        Observable.interval(1,TimeUnit.SECONDS)
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        System.out.println(aLong);
                     }
                 });
     }

@@ -1,6 +1,7 @@
 package com.example.yupenglei.yu_rxandroid;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.DistinctFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.FilterFragment;
@@ -19,6 +21,11 @@ import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.TakeFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.GroupByFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.MapFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.ScanFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.AndThenWhenFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.CombineLatest;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.JoinFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.MergeFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.ZipFragment;
 
 import butterknife.ButterKnife;
 
@@ -54,6 +61,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
         return super.onCreateOptionsMenu(menu);
     }
 
+    private final String TAG = getClass().getSimpleName();
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        startActivity(new Intent(this, TestActivity.class));
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         Log.e(">>>", String.format("click item %d", position));
@@ -85,6 +100,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 8:
                 fragment = new GroupByFragment();
+                break;
+            case 9:
+                fragment = new MergeFragment();
+                break;
+            case 10:
+                fragment = new ZipFragment();
+                break;
+            case 11:
+                fragment = new JoinFragment();
+                break;
+            case 12:
+                fragment = new CombineLatest();
+                break;
+            case 13:
+                fragment = new AndThenWhenFragment();
                 break;
         }
         if (fragment != null) {

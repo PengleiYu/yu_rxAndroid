@@ -16,40 +16,16 @@ import rx.functions.Func1;
  */
 
 public class FilterFragment extends MidLayerFragment {
-    @Override
-    protected void loadApps() {
-        loadList(ApplicationList.getInstance().getList());
-    }
 
-    private void loadList(List<AppInfo> appInfos) {
-        Observable.from(appInfos)
+    @Override
+    protected Observable<AppInfo> getObservable() {
+        return Observable.from(ApplicationList.getInstance().getList())
                 .filter(new Func1<AppInfo, Boolean>() {
                     @Override
                     public Boolean call(AppInfo info) {
                         return info.getName().toUpperCase().startsWith("C");
                     }
-                })
-                .doOnSubscribe(new Action0() {
-                    @Override
-                    public void call() {
-                        mAdapter.clear();
-                    }
-                })
-                .subscribe(new Subscriber<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        doCompelet("Filter");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        doError();
-                    }
-
-                    @Override
-                    public void onNext(AppInfo info) {
-                        mAdapter.addAppInfo(info);
-                    }
                 });
+
     }
 }

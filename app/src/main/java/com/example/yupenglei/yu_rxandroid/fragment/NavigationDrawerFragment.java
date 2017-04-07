@@ -46,6 +46,11 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
         adapter.add("map");
         adapter.add("scan");
         adapter.add("groupBy");
+        adapter.add("merge");
+        adapter.add("zip");
+        adapter.add("join");
+        adapter.add("combineLatest");
+        adapter.add("andThenWhen");
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);

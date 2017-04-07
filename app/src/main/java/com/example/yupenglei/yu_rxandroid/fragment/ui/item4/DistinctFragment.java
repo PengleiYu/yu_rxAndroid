@@ -6,7 +6,6 @@ import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
 import com.example.yupenglei.yu_rxandroid.fragment.MidLayerFragment;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -22,32 +21,15 @@ public class DistinctFragment extends MidLayerFragment {
     private Subscription mSubscribe;
 
     @Override
-    protected void loadApps() {
-        loadApps(ApplicationList.getInstance().getList());
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (!mSubscribe.isUnsubscribed()) {
+            mSubscribe.unsubscribe();
+        }
     }
 
-    private void loadApps(List<AppInfo> appInfos) {
-        Observable.from(appInfos)
-                .take(4)
-                .repeat(3)
-                .distinct()
-                .subscribe(new Subscriber<AppInfo>() {
-                    @Override
-                    public void onCompleted() {
-                        doCompelet("distinct");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        doError();
-                    }
-
-                    @Override
-                    public void onNext(AppInfo info) {
-                        mAdapter.addAppInfo(info);
-                    }
-                });
-
+    @Override
+    protected Observable<AppInfo> getObservable() {
         final int[] ints = new int[]{21, 22, 22, 23, 22, 24, 24, 24, 22, 23, 24, 25, 26, 27, 28};
         mSubscribe = Observable.interval(3, TimeUnit.SECONDS)
 //                .map(new Func1<Long, Integer>() {
@@ -78,14 +60,9 @@ public class DistinctFragment extends MidLayerFragment {
                         Log.e(">>>", integer + "");
                     }
                 });
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (!mSubscribe.isUnsubscribed()) {
-            mSubscribe.unsubscribe();
-        }
+        return Observable.from(ApplicationList.getInstance().getList())
+                .take(4)
+                .repeat(3)
+                .distinct();
     }
 }

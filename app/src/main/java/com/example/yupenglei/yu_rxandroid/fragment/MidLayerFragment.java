@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by yupenglei on 17/4/5.
@@ -31,6 +35,7 @@ public abstract class MidLayerFragment extends BaseFragment implements SwipeRefr
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     private Unbinder mUnbinder;
     protected ApplicationAdapter mAdapter;
+    private Subscription mSubscribe;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -50,6 +55,9 @@ public abstract class MidLayerFragment extends BaseFragment implements SwipeRefr
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+        if (mSubscribe != null && !mSubscribe.isUnsubscribed()) {
+            mSubscribe.unsubscribe();
+        }
     }
 
     protected void doCompelet(String fragmentNumber) {
@@ -66,7 +74,31 @@ public abstract class MidLayerFragment extends BaseFragment implements SwipeRefr
     @Override
     public void onRefresh() {
         mAdapter.clear();
-        loadApps();
+        mSubscribe = getObservable().observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<AppInfo>() {
+                    @Override
+                    public void onCompleted() {
+                        doCompelet(getName());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        doError();
+                    }
+
+                    @Override
+                    public void onNext(AppInfo info) {
+                        mAdapter.addAppInfo(info);
+                        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    }
+                });
     }
-    protected abstract void loadApps();
+
+    private String getName() {
+        String name = getClass().getSimpleName();
+        return name.substring(0, name.lastIndexOf("Fragment"));
+    }
+
+    protected abstract Observable<AppInfo> getObservable();
+
 }
