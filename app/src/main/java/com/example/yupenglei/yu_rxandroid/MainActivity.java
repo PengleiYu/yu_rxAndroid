@@ -2,6 +2,7 @@ package com.example.yupenglei.yu_rxandroid;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +14,10 @@ import android.view.MenuItem;
 
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.DistinctFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.FilterFragment;
-import com.example.yupenglei.yu_rxandroid.fragment.ui.FirstFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item1.FirstFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.NavigationDrawerFragment;
-import com.example.yupenglei.yu_rxandroid.fragment.ui.SecondFragment;
-import com.example.yupenglei.yu_rxandroid.fragment.ui.ThreeFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item2.SecondFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item3.ThreeFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item4.TakeFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.GroupByFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item5.MapFragment;
@@ -26,6 +27,9 @@ import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.CombineLatest;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.JoinFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.MergeFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.ZipFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.LongTaskFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.NetWorkFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.SharedPreferenceFragment;
 
 import butterknife.ButterKnife;
 
@@ -52,6 +56,19 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 ().findFragmentById(R.id.fragment_drawer);
         fragment_drawer.setNavigationDrawerCallbacks(this);
         onNavigationDrawerItemSelected(0);
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(
+                    new StrictMode.ThreadPolicy.Builder()
+                            .detectAll()
+                            .penaltyLog()
+                            .build());
+            StrictMode.setVmPolicy(
+                    new StrictMode.VmPolicy.Builder()
+                            .detectAll()
+                            .penaltyLog()
+                            .build());
+        }
     }
 
 
@@ -115,6 +132,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 13:
                 fragment = new AndThenWhenFragment();
+                break;
+            case 14:
+                fragment = new SharedPreferenceFragment();
+                break;
+            case 15:
+                fragment = new LongTaskFragment();
+                break;
+            case 16:
+                fragment = new NetWorkFragment();
                 break;
         }
         if (fragment != null) {

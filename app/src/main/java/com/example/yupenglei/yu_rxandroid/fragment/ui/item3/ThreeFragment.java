@@ -1,4 +1,4 @@
-package com.example.yupenglei.yu_rxandroid.fragment.ui;
+package com.example.yupenglei.yu_rxandroid.fragment.ui.item3;
 
 import android.util.Log;
 

@@ -1,6 +1,8 @@
-package com.example.yupenglei.yu_rxandroid.fragment.ui;
+package com.example.yupenglei.yu_rxandroid.fragment.ui.item1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -10,8 +12,11 @@ import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.AppInfoRich;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;
 import com.example.yupenglei.yu_rxandroid.fragment.MidLayerFragment;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +33,13 @@ import rx.schedulers.Schedulers;
 
 public class FirstFragment extends MidLayerFragment {
 
-    private void storeList(final List<AppInfo> appInfos) {
+    private void storeList(List<AppInfo> appInfos) {
         ApplicationList.getInstance().setList(appInfos);
 
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        Type type = new TypeToken<List<AppInfo>>() {
+        }.getType();
+        sharedPreferences.edit().putString("Apps", new Gson().toJson(appInfos, type)).apply();
 //        Schedulers.io().createWorker().schedule(new Action0() {
 //            @Override
 //            public void call() {
@@ -40,16 +49,6 @@ public class FirstFragment extends MidLayerFragment {
 //                sp.edit().putString("Apps", new Gson().toJson(appInfos, type)).apply();
 //            }
 //        });
-    }
-
-    private Observable<File> getFileDir() {
-        return Observable.create(new Observable.OnSubscribe<File>() {
-            @Override
-            public void call(Subscriber<? super File> subscriber) {
-                subscriber.onNext(getActivity().getFilesDir());
-                subscriber.onCompleted();
-            }
-        });
     }
 
     private Observable<AppInfo> getApps() {
@@ -85,12 +84,6 @@ public class FirstFragment extends MidLayerFragment {
 
     }
 
-//    @Override
-//    public void onRefresh() {
-//        mAdapter.clear();
-//        loadApps();
-//    }
-
     @Override
     protected Observable<AppInfo> getObservable() {
         Observable<List<AppInfo>> listObservable = getApps().subscribeOn(Schedulers.io())
@@ -123,26 +116,4 @@ public class FirstFragment extends MidLayerFragment {
         return Observable.concat(map).observeOn(AndroidSchedulers.mainThread());
     }
 
-    protected void loadApps() {
-        getApps().subscribeOn(Schedulers.io())
-                .toSortedList()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<AppInfo>>() {
-                    @Override
-                    public void onCompleted() {
-                        doCompelet("First");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        doError();
-                    }
-
-                    @Override
-                    public void onNext(List<AppInfo> appInfos) {
-                        mAdapter.addAppInfo(appInfos);
-                        storeList(appInfos);
-                    }
-                });
-    }
 }

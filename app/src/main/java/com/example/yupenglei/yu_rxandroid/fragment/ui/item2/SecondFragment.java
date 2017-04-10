@@ -1,4 +1,4 @@
-package com.example.yupenglei.yu_rxandroid.fragment.ui;
+package com.example.yupenglei.yu_rxandroid.fragment.ui.item2;
 
 import com.example.yupenglei.yu_rxandroid.app.AppInfo;
 import com.example.yupenglei.yu_rxandroid.app.ApplicationList;

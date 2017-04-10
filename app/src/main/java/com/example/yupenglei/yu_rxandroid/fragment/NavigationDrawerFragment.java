@@ -51,6 +51,9 @@ public class NavigationDrawerFragment extends Fragment implements AdapterView.On
         adapter.add("join");
         adapter.add("combineLatest");
         adapter.add("andThenWhen");
+        adapter.add("SharedPreferences");
+        adapter.add("longTask");
+        adapter.add("network");
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
