@@ -30,6 +30,7 @@ import com.example.yupenglei.yu_rxandroid.fragment.ui.item6.ZipFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.LongTaskFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.NetWorkFragment;
 import com.example.yupenglei.yu_rxandroid.fragment.ui.item7.SharedPreferenceFragment;
+import com.example.yupenglei.yu_rxandroid.fragment.ui.item8.StackOverflowFragment;
 
 import butterknife.ButterKnife;
 
@@ -141,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerC
                 break;
             case 16:
                 fragment = new NetWorkFragment();
+                break;
+            case 17:
+                fragment = new StackOverflowFragment();
                 break;
         }
         if (fragment != null) {
